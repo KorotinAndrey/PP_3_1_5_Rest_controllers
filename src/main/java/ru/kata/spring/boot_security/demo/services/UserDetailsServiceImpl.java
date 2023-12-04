@@ -20,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUserName(userName);
+        User user = userRepository.findUserByUserName(userName); //TODO
         Hibernate.initialize(user.getRoleSet());
         if (user == null){
             throw new UsernameNotFoundException("User not found");
