@@ -15,8 +15,8 @@ import java.util.Set;
 @Component
 public class UserDataLoader {
 
-    private UserService userService;
-    private RoleRepository roleRepository;
+    private final UserService userService;
+    private final RoleRepository roleRepository;
 
     @Autowired
     public UserDataLoader(UserService userService, RoleRepository roleRepository) {
