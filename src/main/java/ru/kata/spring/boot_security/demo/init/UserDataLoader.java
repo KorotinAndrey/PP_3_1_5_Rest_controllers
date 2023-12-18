@@ -1,53 +1,47 @@
 package ru.kata.spring.boot_security.demo.init;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
-import ru.kata.spring.boot_security.demo.services.UserService;
+import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class UserDataLoader {
-
-    private final UserService userService;
+public class UserDataLoader implements CommandLineRunner {
+    private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserDataLoader(UserService userService, RoleRepository roleRepository) {
-        this.userService = userService;
+
+    public UserDataLoader(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @PostConstruct
-    private void loadUsers() {
+    public void run(String... arg) throws Exception {
+        Role roleAdmin = new Role("ROLE_ADMIN");
+        Role roleUser = new Role("ROLE_USER");
+        Set<Role> adminRoles = new HashSet<>();
+        Set<Role> userRoles = new HashSet<>();
+        roleRepository.save(roleAdmin);
+        roleRepository.save(roleUser);
+        adminRoles.add(roleAdmin);
+        adminRoles.add(roleUser);
+        userRoles.add(roleUser);
 
-        Role adminRole = new Role();
-        adminRole.setName("ROLE_ADMIN");
-        Role userRole = new Role();
-        userRole.setName("ROLE_USER");
-        roleRepository.save(adminRole);
-        roleRepository.save(userRole);
 
-        Set<Role> roles = new HashSet<>();
-        roles.add(adminRole);
-        roles.add(userRole);
-
-        User userAdmin = new User(3L, "Olga", "Korotina", (byte)55, "olga@mail.ru", "Olga", "12345");
-        userAdmin.setRoleSet(userAdmin.getRoleSet());
-        userAdmin.setRoleSet(roles);
-        userService.create(userAdmin);
-
-        roles.clear();
-        User user1 = new User(4L, "Katya", "Karpenko", (byte) 31, "katya@mail.ru", "Katya", "12345");
-        roles.add(userRole);
-        user1.setRoleSet(roles);
-        userService.create(user1);
+        User userAdmin = new User("Katya", "Karpenko", "katya@mail.ru", passwordEncoder.encode("12345"), adminRoles);
+        User userUser = new User("Ruslan", "Karpenko", "ruslan@mail.ru", passwordEncoder.encode("12345"), userRoles);
+        System.out.println(userAdmin);
+        userRepository.save(userAdmin);
+        System.out.println(userUser);
+        userRepository.save(userUser);
 
     }
 }
