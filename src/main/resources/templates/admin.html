@@ -79,10 +79,10 @@
 
                                 <tr>
                                 <tr th:each="user : ${users}">
-                                    <td th:text="${user.getId()}">1</td>
-                                    <td th:text="${user.getName()}">Andrey</td>
-                                    <td th:text="${user.getLast_name()}">Korotin</td>
-                                    <td th:text="${user.getUsername()}">korotin@mail.ru</td>
+                                    <td th:text="${user.getId()}"></td>
+                                    <td th:text="${user.getName()}"></td>
+                                    <td th:text="${user.getLast_name()}"></td>
+                                    <td th:text="${user.getUsername()}"></td>
                                     <td th:text="${user.getRoles()}">ADMIN</td>
                                     <td>
                                         <button type="button" class="btn btn-info" data-bs-toggle="modal"
@@ -100,9 +100,10 @@
                                     <div class="modal fade" th:id="${'modalEdit'+user.id}">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <form id="formEdit" th:method="PATCH"
+                                                <form id="formEdit" th:method="POST"
                                                       th:action="@{/admin/{id}(id=${user.id})}"
                                                       th:object="${user}">
+                                                    <input type="hidden" name="_method" value="PATCH" />
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Edit user</h5>
                                                         <button type="button" class="btn-close"
@@ -193,9 +194,10 @@
                                          aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
-                                                <form id="formDelete" th:method="DELETE"
+                                                <form id="formDelete" th:method="POST"
                                                       th:action="@{/admin/{id}(id=${user.id})}"
                                                       th:object="${user}">
+                                                    <input type="hidden" name="_method" value="DELETE" />
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Delete user</h5>
                                                         <button type="button" class="btn-close"
